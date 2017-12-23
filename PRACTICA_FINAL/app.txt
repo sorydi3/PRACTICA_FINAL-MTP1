@@ -1,0 +1,8 @@
+1790 quit_the_room raonament 15 3 2017 200
+1183 masters_of_golf esports 17 2 2017 120
+3312 kill_m_all shooter 1 2 2017 77
+9074 my_fancy_dress infantil 3 5 2017 95
+8765 nba_showtime esports 2 4 2017 48
+3333 killer_sudoku raonament 12 12 2016 100
+1212 pets_farm infantil 1 1 2017 86
+7777 divide_and_conquer estrategia 3 3 2017 219
