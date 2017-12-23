@@ -31,6 +31,9 @@ struct Vector_apps {
 	infoApps apps;
 	unsigned curren_size;
 };
+void print_vector(Vector_apps &vector) {
+	for (int i = 0; i < vector.curren_size; i++)cout << "id app:  " << "[" << i << "] = " << vector.apps[i].Id_app <<"   downloads: "<<vector.apps[i].downloads<<" type:  "<<vector.apps[i].type<< endl;
+}
 ////////////////////////////////////------------SHOW INFO APP  METHODE AND READ APP FROM FILE METHODE----------///////////////////////////////////
 App read_app(ifstream& in_file) {
 	//pre: file open
@@ -76,6 +79,76 @@ void fill_vector_sorting(Vector_apps &vector, App app) {
 	vector.curren_size++;
 }
 
+unsigned int  convert_date(App app) {
+	string data = to_string(app.date.day) + to_string(app.date.month) + to_string(app.date.year);
+	return stoi(data);
+}
+
+bool es_menor(App app_a, App app_b, char criteri) {
+	bool menor = true;
+	if (criteri = 'l') {
+		menor = app_a.downloads < app_b.downloads;
+		if (app_a.downloads == app_b.downloads) {
+			menor = app_a.name_app < app_b.name_app;
+		}
+	}
+	else if (criteri = 't') {
+		menor = convert_date(app_a) < convert_date(app_b);
+		if (convert_date(app_a) == convert_date(app_b)) {
+			menor = app_a.name_app < app_b.name_app;
+		}
+	}
+	return menor;
+}
+
+
+void fill_vector_sortiing(App app, Vector_apps &vector,char opcion) {
+	//pre:
+	//post:
+	
+	int i = vector.curren_size;
+	cout << "curren size: " << i << endl;
+	while (i > 0 && es_menor(app , vector.apps[i - 1],opcion)) {
+		vector.apps[i] = vector.apps[i - 1];
+		i--;
+	}
+	vector.apps[i] = app;
+	vector.curren_size++;
+
+}
+void sort_apps_by_dowloads(Vector_apps& vector_apps, char option) {
+	//pre:
+	//post:
+	Vector_apps sorted_by_downloads;//new vector to store apps sorted by downloads
+	sorted_by_downloads.curren_size = 0;
+	for (unsigned i = 0; i < vector_apps.curren_size; i++) {
+		fill_vector_sortiing(vector_apps.apps[i], sorted_by_downloads, option);// filling the vector 
+	}
+	//print_vector(sorted_by_downloads);
+	for (unsigned i = 0; i < sorted_by_downloads.curren_size - 1; i++)
+		cout << "downloads: " << sorted_by_downloads.apps[i].downloads << endl;
+}
+
+void sort_apps_by_type(Vector_apps &vector_apps, char option) {
+	//pre:
+	//post:
+	Vector_apps new_vector;
+	new_vector.curren_size = 0;
+	unsigned countador = 0;
+	cout << "enter type " << endl;
+	string type;
+	cin >> type;
+	for (unsigned i = 0; i < vector_apps.curren_size; i++) {
+		if (vector_apps.apps[i].type == type) {
+			fill_vector_sortiing(vector_apps.apps[i], new_vector, option);// filling the vector 
+			countador++;
+		}
+	}
+	cout << "countador :" << countador << endl;
+	for (unsigned i = 0; i < new_vector.curren_size; i++)
+		cout << "type: " << new_vector.apps[i].type<<" date: "<< new_vector.apps[i].date.day << new_vector.apps[i].date.month<< endl;
+
+}
 ////////////////////////////////////////-----------METHODE THAT READ THE FILE---------------///////////////////////////////////////////////////
 void read_file(ifstream &in_file, Vector_apps &vector_apps) {
 	//pre:
@@ -87,9 +160,7 @@ void read_file(ifstream &in_file, Vector_apps &vector_apps) {
 		app = read_app(in_file);
 	}
 }
-void print_vector(Vector_apps &vector) {
-	for (int i = 0; i < vector.curren_size; i++)cout << "id app:  " << "[" << i << "] = " << vector.apps[i].Id_app << endl;
-}
+
 ////////////////////////////////////-----------REGISTER AN APP-------------//////////////////////////////////////////////////////////////////
 
 void incert_element(Vector_apps &vector, App app, unsigned pos) {
@@ -181,7 +252,7 @@ void compute_option(char option, Vector_apps& vector_apps) {
 	switch (option)
 	{
 	case 'l':
-		//sort_apps_by_dowloads(vector_apps);
+		sort_apps_by_dowloads(vector_apps,option);
 		break;
 	case 'a':
 
@@ -199,7 +270,7 @@ void compute_option(char option, Vector_apps& vector_apps) {
 		modifier_vector(vector_apps, option);
 		break;
 	case 't':
-		//sort_apps_by_type(vector_apps);
+		sort_apps_by_type(vector_apps,option);
 		break;
 	case 'x':
 		//sort_app_by_id();
