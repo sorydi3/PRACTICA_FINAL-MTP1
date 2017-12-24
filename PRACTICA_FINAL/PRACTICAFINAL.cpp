@@ -32,12 +32,14 @@ struct Vector_apps {
 	unsigned curren_size;
 };
 void print_vector(Vector_apps &vector) {
+	//pre:cert
+	//post:print to console data stored inside a given vector
 	for (int i = 0; i < vector.curren_size; i++)cout << "id app:  " << "[" << i << "] = " << vector.apps[i].Id_app <<"   downloads: "<<vector.apps[i].downloads<<" type:  "<<vector.apps[i].type<< endl;
 }
 ////////////////////////////////////------------SHOW INFO APP  METHODE AND READ APP FROM FILE METHODE----------///////////////////////////////////
 App read_app(ifstream& in_file) {
 	//pre: file open
-	//post:
+	//post: have read an app from the file
 	App app;
 	in_file >> app.Id_app >> app.name_app >> app.type >> app.date.day >> app.date.month >> app.date.year >> app.downloads;
 	return app;
@@ -51,8 +53,8 @@ void show_info_app(const Vector_apps vector_apps, unsigned pos_element) {
 }
 ////////////////////////////////////////-------------BINARY SERACH METHODE---------------////////////////////////////////////////////////////////////////
 void search_element(Vector_apps& vector, App app, bool& is_there, unsigned & pos_element) {
-	//pre:cert
-	//post:
+	//pre:pos_elemrnt>=0 i pos_element<=vector.curen_size-1 i vector[0..n-1] sorted
+	//post:search
 	int low = 0;
 	int hight = vector.curren_size - 1;
 	int pos = 0;
@@ -259,21 +261,18 @@ void compute_option(char option, Vector_apps& vector_apps) {
 		register_app(vector_apps);
 		break;
 	case 'b':
-		//delete_app(vector_apps);
 		modifier_vector(vector_apps, option);
 		break;
 	case 'c':
 		querry_info_app(vector_apps);
 		break;
 	case 'd':
-		//update_downloads(vector_apps);
 		modifier_vector(vector_apps, option);
 		break;
 	case 't':
 		sort_apps_by_type(vector_apps,option);
 		break;
 	case 'x':
-		//sort_app_by_id();
 		print_vector(vector_apps);
 		break;
 	default:
