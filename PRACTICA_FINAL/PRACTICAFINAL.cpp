@@ -33,7 +33,7 @@ struct Vector_apps {
 void print_vector(Vector_apps &vector) {
 	//pre:cert
 	//post:print to console data stored inside a given vector
-	for (unsigned int i = 0; i < vector.curren_size; i++)
+	for ( int i = 0; i < vector.curren_size; i++)
 		cout << vector.apps[i].Id_app <<"  "<<vector.apps[i].name_app<<"  " <<
 		vector.apps[i].type<<"  "<<vector.apps[i].downloads <<"  "<< vector.apps[i].date.day <<"  "<<
 		vector.apps[i].date.month <<"  "<< vector.apps[i].date.year << endl;
@@ -83,22 +83,40 @@ void fill_vector_sorting(Vector_apps &vector, App app) {
 	vector.curren_size++;
 }
 
-unsigned int  convert_date(App app) {
-	string data = to_string(app.date.day) + to_string(app.date.month) + to_string(app.date.year);
-	return stoi(data);
-}
 
+void es_menor_data(App app_a, App app_b,bool &menor_data,bool &same) {
+	//compa
+	menor_data = app_a.date.year < app_b.date.year;
+	cout << menor_data<< " 1  : menor data: app_A " << app_a.date.year << "app_b: " << app_b.date.year << endl;
+	if (app_a.date.year == app_b.date.year) {
+		menor_data = app_a.date.month < app_b.date.month;
+		if (app_a.date.month == app_b.date.month) {
+			menor_data = app_a.date.day < app_b.date.day;
+			if (app_a.date.day == app_b.date.day) {
+				same = true;
+				cout << "los dos son iguals" << endl;
+			}
+		}
+	 }
+ }
 bool es_menor(App app_a, App app_b, char criteri) {
+	cout << "es menor working :" <<criteri<< endl;
 	bool menor = true;
+	string message ;
 	if (criteri = 'l') {
+		cout << "dowloads worhing " << endl;
 		menor = app_a.downloads > app_b.downloads;
 		if (app_a.downloads == app_b.downloads) {
 			menor = app_a.name_app > app_b.name_app;
 		}
 	}
-	else if (criteri = 't') {
-		menor = convert_date(app_a) < convert_date(app_b);
-		if (convert_date(app_a) == convert_date(app_b)) {
+	else {
+		cout << "criteri choosen" << endl;
+		message = "ha passat per dintre";
+		bool same = false,menor_data=false;
+		es_menor_data(app_a, app_b, menor_data, same);
+		menor = menor_data;
+		if (same) {
 			menor = app_a.name_app < app_b.name_app;
 		}
 	}
@@ -111,7 +129,6 @@ void fill_vector_sortiing(App app, Vector_apps &vector,char opcion) {
 	//post:
 	
 	int i = vector.curren_size;
-	//cout << "curren size: " << i << endl;
 	while (i > 0 && es_menor(app , vector.apps[i - 1],opcion)) {
 		vector.apps[i] = vector.apps[i - 1];
 		i--;
@@ -125,12 +142,10 @@ void sort_apps_by_dowloads(Vector_apps& vector_apps, char option) {
 	//post:
 	Vector_apps sorted_by_downloads;//new vector to store apps sorted by downloads
 	sorted_by_downloads.curren_size = 0;
-	for (unsigned i = 0; i < vector_apps.curren_size; i++) {
+	for (int i = 0; i < vector_apps.curren_size; i++) {
 		fill_vector_sortiing(vector_apps.apps[i], sorted_by_downloads, option);// filling the vector 
 	}
 	print_vector(sorted_by_downloads);
-	//for (unsigned i = 0; i < sorted_by_downloads.curren_size; i++)
-		//cout << "downloads: " << sorted_by_downloads.apps[i].downloads << endl;
 }
 
 void sort_apps_by_type(Vector_apps &vector_apps, char option) {
@@ -138,21 +153,14 @@ void sort_apps_by_type(Vector_apps &vector_apps, char option) {
 	//post:
 	Vector_apps new_vector;
 	new_vector.curren_size = 0;
-	unsigned countador = 0;
-	cout << "enter type " << endl;
 	string type;
 	cin >> type;
-	for (unsigned i = 0; i < vector_apps.curren_size; i++) {
+	for (int i = 0; i < vector_apps.curren_size; i++) {
 		if (vector_apps.apps[i].type == type) {
-			fill_vector_sortiing(vector_apps.apps[i], new_vector, option);// filling the vector 
-			countador++;
+			fill_vector_sortiing(vector_apps.apps[i], new_vector, option);// filling the new vector 
 		}
 	}
-	//print vector
-	cout << "countador :" << countador << endl;
-	for (unsigned i = 0; i < new_vector.curren_size; i++)
-		cout << "type: " << new_vector.apps[i].type<<" date: "<< new_vector.apps[i].date.day << new_vector.apps[i].date.month<< endl;
-
+	print_vector(new_vector);
 }
 ////////////////////////////////////////-----------METHODE THAT READ THE FILE---------------///////////////////////////////////////////////////
 void read_file(ifstream &in_file, Vector_apps &vector_apps) {
@@ -171,23 +179,19 @@ void read_file(ifstream &in_file, Vector_apps &vector_apps) {
 void incert_element(Vector_apps &vector, App app, unsigned pos) {
 	//pre:
 	//post:
-	for (unsigned int i = vector.curren_size - 1; i > pos; i--) {
+	for ( int i = vector.curren_size - 1; i > pos; i--) {
 		vector.apps[i] = vector.apps[i - 1];
 	}
-	//cout << " receved to incert: " << app.Id_app << app.name_app << app.type << app.date.day << app.date.month << app.date.year << app.downloads;
 	vector.apps[pos] = app;
 	vector.curren_size++;
-	//cout << "succeful insercion  size !: pos " << vector.curren_size << " : " << pos << endl;
 }
 
 void register_app(Vector_apps& vector_apps) {
 	//pre:
 	//post:
-	//cout << "estoy en register " << endl;
 	App app;
 	bool is_there = false;
 	unsigned pos_insersion;
-	//cout << "insert details of the apps " << endl;
 	cin >> app.Id_app >> app.name_app >> app.type >> app.date.day >> app.date.month >> app.date.year >> app.downloads;
 	search_element(vector_apps, app, is_there, pos_insersion);
 	if (is_there) cout << "CODI EXISTENT" << endl;
@@ -213,10 +217,9 @@ void querry_info_app(Vector_apps &vector_apps) {
 void delete_app_vector(Vector_apps &vector_app, App app, unsigned pos_element) {
 	//pre:
 	//post:
-	for (unsigned i = pos_element; i <= vector_app.curren_size - 2; i++)
+	for (int i = pos_element; i <= vector_app.curren_size - 2; i++)
 		vector_app.apps[i] = vector_app.apps[i + 1];
 	vector_app.curren_size--;
-	//cout << "succeful deletion : " << endl;
 }
 
 void modifier_vector(Vector_apps &vector_apps, char option) {
@@ -228,10 +231,8 @@ void modifier_vector(Vector_apps &vector_apps, char option) {
 	cin >> app.Id_app;
 	search_element(vector_apps, app, is_there, pos_element);
 	if (option == 'd' && is_there) {
-		//cout << "ENTER NUMBER DOWLOADS: ";
 		cin >> n_downloads;//ask user to enter the number of the new dowloads
 		vector_apps.apps[pos_element].downloads += n_downloads; //update downloads
-		//cout << "succeful downloads " << endl;
 		show_info_app(vector_apps, pos_element);
 	}
 	else if (option == 'b' && is_there) delete_app_vector(vector_apps, app, pos_element);//delete an app
@@ -241,20 +242,8 @@ void modifier_vector(Vector_apps &vector_apps, char option) {
 	}
 }
 ///////////////////////////////////////////////////////------------MANAGER METHODS---------//////////////////////////////////////////////////////////
-void showMenu(char &option) {
-	cout << "CHOOSE ACTION " << endl;
-	cout << "L:llista apps" << endl;
-	cout << "A:Alta" << endl;
-	cout << "B:Baixa app" << endl;
-	cout << "D:Actulitza descarregues" << endl;
-	cout << "C:Codi_app info" << endl;
-	cout << "T:raonament" << endl;
-	cout << "X:--" << endl;
-	cin >> option;
-}
 void compute_option(char option, Vector_apps& vector_apps) {
 	option = tolower(option);
-	//cout << "estoy aquii compute : " << option << endl;
 	switch (option)
 	{
 	case 'l':
@@ -276,42 +265,27 @@ void compute_option(char option, Vector_apps& vector_apps) {
 	case 't':
 		sort_apps_by_type(vector_apps,option);
 		break;
-
 	default:
-		cout << "opcio inexisten" << endl;
+		cout << "INEXISTEN" << endl;
 		break;
 	}
 }
 ////////////////////////////////////////-------------MAIN-------------//////////////////////////////////////////////////////////////////////////////////
 int main()
 {
-	//added aome changes
 	Vector_apps vector_apps;
 	vector_apps.curren_size = 0;
-	cout << "enter the name of the file" << endl;
+	cout << "INTRODUEIX NOM FITXER: " << endl;
 	string name_file;
 	cin >> name_file;
 	ifstream in_file(name_file.c_str());
 	if (in_file.is_open()) {
 		read_file(in_file, vector_apps);
-		//print_vector(vector_apps);
-		//cout << "enter id elemrnts to delete" << endl;
-		//App app;
-		//app.Id_app = 1300;
-		//unsigned pos = 0;
-		//bool hi_es = false;
-		//search_element(vector_apps, app, hi_es, pos);
-		//if (hi_es) {
-		//	cout << "hi_es: " << pos << endl;
-		//}
-		//else {
-		//	cout << "no_hi es: " << pos << endl;
-		//}
 		char option;
 		cin >> option;
+		option = tolower(option);
 		while (option != 'x') {
 			compute_option(option, vector_apps);
-			//print_vector(vector_apps);
 			cin>>option;
 		}
 		print_vector(vector_apps);
