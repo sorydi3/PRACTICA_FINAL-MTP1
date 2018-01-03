@@ -289,14 +289,6 @@ int main()
 	ifstream in_file(name_file.c_str());
 	if (in_file.is_open()) {
 		read_file(in_file, vector_apps);
-		//ask user to enter an option to
-		char option;
-		do {
-			cin >> option;
-			char optione = tolower(option);
-			if (optione == 'x') break;//make sure to end the programe finish when entered an 'x'
-			compute_option(optione, vector_apps);
-		} while (option != 'x');
 		print_vector(vector_apps);
 	}
 	else {
