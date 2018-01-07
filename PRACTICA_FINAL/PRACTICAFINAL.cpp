@@ -277,10 +277,6 @@ void compute_option(char option, Vector_apps& vector_apps) {
 		//this methode sort the apps by date and only showing a type chosent by the user
 		sort_apps_by_type(vector_apps, option);
 		break;
-	case 'x':
-		//this methode sort the apps by date and only showing a type chosent by the user
-		print_vector(vector_apps);
-		break;
 	default:
 		cout << "INEXISTENT" << endl;
 		break;
@@ -300,6 +296,13 @@ int main()
 	ifstream in_file(name_file.c_str());
 	if (in_file.is_open()) {
 		read_file(in_file, vector_apps);
+		//ask user to enter an option to		
+		char option;
+		do {
+			cin >> option;
+			char optione = tolower(option);	
+			compute_option(optione, vector_apps);
+		} while (option != 'x');
 		print_vector(vector_apps);
 	}
 	else {
