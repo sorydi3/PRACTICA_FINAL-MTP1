@@ -31,32 +31,33 @@ struct Vector_apps {
 };
 void print_vector(Vector_apps &vector) {
 	//pre:cert
-	//post:print to console data stored inside a given vector
-	for ( unsigned  i = 0; i < vector.curren_size; i++)
-		cout << vector.apps[i].Id_app <<"  "<<vector.apps[i].name_app<<"  " <<
-		vector.apps[i].type<<"  "<<vector.apps[i].downloads <<"  "<< vector.apps[i].date.day <<"  "<<
-		vector.apps[i].date.month <<"  "<< vector.apps[i].date.year << endl;
+	//post:mostra en la consola els apps guardat en un vector
+	for (unsigned i = 0; i < vector.curren_size; i++)
+		cout << vector.apps[i].Id_app << "  " << vector.apps[i].name_app << "  " <<
+		vector.apps[i].type << "  " << vector.apps[i].downloads << "  " << vector.apps[i].date.day << "  " <<
+		vector.apps[i].date.month << "  " << vector.apps[i].date.year << endl;
 }
 
 ////////////////////////////////////------------SHOW INFO APP  METHODE AND READ APP FROM FILE METHODE----------///////////////////////////////////
 App read_app(ifstream& in_file) {
-	//pre: file open
-	//post: have read an app from the file
+	//pre: cert
+	//post: ha llegit una app en el fitxer
 	App app;
 	in_file >> app.Id_app >> app.name_app >> app.type >> app.date.day >> app.date.month >> app.date.year >> app.downloads;
 	return app;
 }
 void show_info_app(const Vector_apps vector_apps, unsigned pos_element) {
 	//pre:cert
-	//post:
+	//post:mostra la informacio de l'app
 	cout << vector_apps.apps[pos_element].Id_app << "  " << vector_apps.apps[pos_element].name_app << "  " << vector_apps.apps[pos_element].type
 		<< "  " << vector_apps.apps[pos_element].downloads << "  " << vector_apps.apps[pos_element].date.day << "  " << vector_apps.apps[pos_element].date.month
 		<< "  " << vector_apps.apps[pos_element].date.year << endl;
 }
 ////////////////////////////////////////-------------BINARY SERACH METHODE---------------////////////////////////////////////////////////////////////////
 void search_element(Vector_apps& vector, App app, bool& is_there, int & pos_element) {
-	//pre:pos_elemrnt>=0 i pos_element<=vector.curen_size-1 i vector[0..n-1] sorted
-	//post:search
+	//Pre: 0<=v.n<=MAX, v.t[0..v.n-1] ordenat creixentment
+	//Post: retorna cert si x és un dels elements de v.t[0..v.n-1] i la posicio, fals
+	//altrament
 	int low = 0;
 	int hight = vector.curren_size - 1;
 	int pos = 0;
@@ -70,10 +71,10 @@ void search_element(Vector_apps& vector, App app, bool& is_there, int & pos_elem
 	else pos_element = low;
 	//incert_to_position(vector, pos, app);
 }
-/////////////////////////////////////-------------INSERT METHODE IN ORDERED ARRAY-----------------////////////////////////////////////////////////////////
+/////////////////////////////////////-------------INSERT METHODE, IN ORDERED ARRAY-----------------////////////////////////////////////////////////////////
 void fill_vector_sorting(Vector_apps &vector, App app) {
-	//pre:cert
-	//post:
+	//Pre: 0<=v.n<MAX, v.t[0..n-1] ordenat creixentment
+	//Post: x inserit ordenadament a v.t
 	int i = vector.curren_size;
 	while (i > 0 && app.Id_app < vector.apps[i - 1].Id_app) {
 		vector.apps[i] = vector.apps[i - 1];
@@ -84,22 +85,25 @@ void fill_vector_sorting(Vector_apps &vector, App app) {
 }
 
 
-void es_menor_data(App app_a, App app_b,bool &menor_data,bool &same) {
-	//this methode compare the date
+void es_menor_data(App app_a, App app_b, bool &menor_data, bool &same) {
+	//Pre: criteri ='t'
+	//Post: retorna cert si app_a.date_a és menor que app_b.date_b segons el criteri
 	menor_data = app_a.date.year < app_b.date.year;
 	if (app_a.date.year == app_b.date.year) {
 		menor_data = app_a.date.month < app_b.date.month;
 		if (app_a.date.month == app_b.date.month) {
 			menor_data = app_a.date.day < app_b.date.day;
 			if (app_a.date.day == app_b.date.day) {
-				same = true;
+				same = true;  //equal to true when both date are equal
 			}
 		}
-	 }
- }
+	}
+}
 bool es_menor(App app_a, App app_b, char criteri) {
+	//Pre: criteri = (‘l’, ‘t’)
+	//Post: retorna cert si a és menor que b segons el criteri
 	bool menor = true;
-	string message ;
+	string message;
 	if (criteri == 'l') {
 		menor = app_a.downloads > app_b.downloads;
 		if (app_a.downloads == app_b.downloads) {
@@ -108,7 +112,7 @@ bool es_menor(App app_a, App app_b, char criteri) {
 	}
 	else {
 		// sort by type option == 't'
-		bool same = false,menor_data=false;
+		bool same = false, menor_data = false;
 		es_menor_data(app_a, app_b, menor_data, same);
 		menor = menor_data;
 		if (same) {
@@ -119,12 +123,12 @@ bool es_menor(App app_a, App app_b, char criteri) {
 }
 
 
-void fill_vector_sortiing(App app, Vector_apps &vector,char opcion) {
-	//pre:
-	//post:
-	
+void fill_vector_sortiing(App app, Vector_apps &vector, char opcion) {
+	//Pre: 0<=v.n<MAX, v.t[0..n-1] ordenat creixentment
+	//Post: x inserit ordenadament a v.t
+
 	int i = vector.curren_size;
-	while (i > 0 && es_menor(app , vector.apps[i - 1],opcion)) {
+	while (i > 0 && es_menor(app, vector.apps[i - 1], opcion)) {
 		vector.apps[i] = vector.apps[i - 1];
 		i--;
 	}
@@ -133,8 +137,9 @@ void fill_vector_sortiing(App app, Vector_apps &vector,char opcion) {
 
 }
 void sort_apps_by_dowloads(Vector_apps& vector_apps, char option) {
-	//pre:
-	//post:
+	//Pre: 0<=v.n<=MAX
+	//Post: v.t[0..v.n-1] conté els elements inicials ordenats segons
+	//downloads
 	Vector_apps sorted_by_downloads;//new vector to store apps sorted by downloads
 	sorted_by_downloads.curren_size = 0;
 	for (unsigned i = 0; i < vector_apps.curren_size; i++) {
@@ -144,8 +149,9 @@ void sort_apps_by_dowloads(Vector_apps& vector_apps, char option) {
 }
 
 void sort_apps_by_type(Vector_apps &vector_apps, char option) {
-	//pre:
-	//post:
+	//Pre: 0<=v.n<=MAX
+	//Post: v.t[0..v.n-1] conté els elements inicials ordenats segons
+	//del tipu especificat per l'usuari
 	Vector_apps new_vector;
 	new_vector.curren_size = 0;
 	string type;
@@ -159,8 +165,8 @@ void sort_apps_by_type(Vector_apps &vector_apps, char option) {
 }
 ////////////////////////////////////////-----------METHODE THAT READ THE FILE---------------///////////////////////////////////////////////////
 void read_file(ifstream &in_file, Vector_apps &vector_apps) {
-	//pre:
-	//post:
+	//pre:cert
+	//post: 0<=vector_apps.n<=CAPACITY,vector_apps.n[0..t.n-1] ordenats per codi,conte els vectors_apps.n apps existents en el fitxer
 	App app;
 	app = read_app(in_file);
 	while (!in_file.eof()) {
@@ -172,9 +178,11 @@ void read_file(ifstream &in_file, Vector_apps &vector_apps) {
 ////////////////////////////////////-----------REGISTER AN APP-------------//////////////////////////////////////////////////////////////////
 
 void incert_element(Vector_apps &vector, App app, int pos) {
+	//Pre: 0<=v.n<MAX, v.t[0..n-1] ordenat creixentment
+	//Post: x inserit ordenadament a v.t
 	//pre:
 	//post:
-	for (  int i = vector.curren_size; i > pos; i--) {
+	for (int i = vector.curren_size; i > pos; i--) {
 		vector.apps[i] = vector.apps[i - 1];
 	}
 	vector.apps[pos] = app;
@@ -182,8 +190,8 @@ void incert_element(Vector_apps &vector, App app, int pos) {
 }
 
 void register_app(Vector_apps& vector_apps) {
-	//pre:
-	//post:
+	//pre:cert
+	//post:Ha incerit dintre del vector l'info de l'app en cas cas existeixi
 	App app;
 	bool is_there = false;
 	int pos_insersion;
@@ -196,8 +204,8 @@ void register_app(Vector_apps& vector_apps) {
 //////////////////////////////////---------QUERRY INFO VECTOR--------///////////////////////////////////////////////////////////////
 
 void querry_info_app(Vector_apps &vector_apps) {
-	//pre:
-	//post:
+	//pre:cert
+	//post:mostra l'info d'una aplicacio
 	App app;
 	cin >> app.Id_app;
 	bool is_there = false;
@@ -210,16 +218,17 @@ void querry_info_app(Vector_apps &vector_apps) {
 ////////////////////////////////////////////--------------UPDATE AND DELETE METHODE-------------///////////////////////////////////////////////////
 
 void delete_app_vector(Vector_apps &vector_app, App app, int pos_element) {
-	//pre:
-	//post:
+	//Pre: 0<=pos<v.n<MAX
+	//Post: v.t[pos_elemrnt] eliminat de v.t mantenint l’ordre dels altres
+	//elements
 	for (unsigned i = pos_element; i <= vector_app.curren_size - 2; i++)
 		vector_app.apps[i] = vector_app.apps[i + 1];
 	vector_app.curren_size--;
 }
 
 void modifier_vector(Vector_apps &vector_apps, char option) {
-	//pre:
-	//post:
+	//Pre: opption= (‘d’, ‘b’)
+	//Post:actualizat les descargas de un especific app si l'opcio='d' altrament si l'opcio='b' elimina	una app 
 	App app;
 	bool is_there = false;
 	int pos_element = 0, n_downloads;
@@ -238,13 +247,15 @@ void modifier_vector(Vector_apps &vector_apps, char option) {
 }
 ///////////////////////////////////////////////////////------------MANAGER METHODS---------//////////////////////////////////////////////////////////
 void compute_option(char option, Vector_apps& vector_apps) {
+	//Pre: criteri = (‘l’, ‘a’,‘b’, ‘c’,‘d’, ‘t’)
+	//Post:executa el methode coresponent segon l'opcil elegit per l'usuari
 	option = tolower(option);
 	//choose methode to execute the operation choosen
 	switch (option)
 	{
 	case 'l':
 		// this methode the sorting by downloads 
-		sort_apps_by_dowloads(vector_apps,option);
+		sort_apps_by_dowloads(vector_apps, option);
 		break;
 	case 'a':
 		// this methode register an app to the array
@@ -264,7 +275,7 @@ void compute_option(char option, Vector_apps& vector_apps) {
 		break;
 	case 't':
 		//this methode sort the apps by date and only showing a type chosent by the user
-		sort_apps_by_type(vector_apps,option);
+		sort_apps_by_type(vector_apps, option);
 		break;
 	case 'x':
 		//this methode sort the apps by date and only showing a type chosent by the user
@@ -278,7 +289,7 @@ void compute_option(char option, Vector_apps& vector_apps) {
 ////////////////////////////////////////-------------MAIN-------------//////////////////////////////////////////////////////////////////////////////////
 int main()
 {
-	// main methode 
+	// MAIN METHODE
 	Vector_apps vector_apps;
 	vector_apps.curren_size = 0;
 	//enter the name of the file
@@ -292,7 +303,6 @@ int main()
 		print_vector(vector_apps);
 	}
 	else {
-		//
 		cout << "FITXER NO DISPONIBLE" << endl;
 	}
 	return 0;
